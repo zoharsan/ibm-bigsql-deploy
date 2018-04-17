@@ -18,10 +18,10 @@ This repository provides the artifacts to automate a single node installation of
 ## Instructions
 ```
 sudo -i
+cp /tmp/ibmdb2bigsqlnpe_5.0.2.bin ~
 yum install -y git
 git clone https://github.com/zoharsan/ibm-bigsql-deploy.git
 cd ibm-bigsql-deploy
-cp /tmp/ibmdb2bigsqlnpe_5.0.2.bin .
 chmod +x *bigsql*
 ./install_hdp_bigsql_final.sh
 ```
