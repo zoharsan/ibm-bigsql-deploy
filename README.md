@@ -26,3 +26,8 @@ chmod +x *bigsql*
 ```
 Depending on the VM performance, the installation can take anywhere between 40 minutes to 1 hour.
 
+##Additional Resources
+IBM BigSQL 5.0.2 Documentation:
+https://www.ibm.com/support/knowledgecenter/en/SSCRJT_5.0.2/com.ibm.swg.im.bigsql.welcome.doc/doc/welcome.html
+
+
