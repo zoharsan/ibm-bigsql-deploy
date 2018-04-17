@@ -25,6 +25,14 @@ cd ibm-bigsql-deploy
 chmod +x *bigsql*
 ./install_hdp_bigsql_final.sh
 ```
+The following variables in the script help control the components to install:
+```
+#Components to install 0 for yes 1 for no
+export deploybasestack=0  #Base HDP stack
+export pwdlesssh=0        #Passwordless ssh
+export bigsql=0           #BigSQL
+export dsm=0              #IBM Data Server Manager Console
+```
 Depending on the VM performance, the installation can take anywhere between 40 minutes to 1 hour.
 
 ## Additional Resources
