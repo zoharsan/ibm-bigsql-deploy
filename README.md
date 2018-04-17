@@ -4,7 +4,7 @@ This repository provides the artifacts to automate a single node installation of
 
 ## Prerequisites
 
-- This script deploys HDP 2.6.4 with IBM BigSQL 5.0.2 using Ambari 2.6.1.0.
+- This script deploys latest IBM BigSQL 5.0.2 on top of HDP 2.6 using Ambari 2.6.1.0.
 - This script has been tested on Hortonworks private Field Cloud, as well Amazon AWS using CentOS 7 image.
 - The minimum specs for the VM are 2 to 4 cores, 16 GB RAM if only HDP+BigSQL are installed.
   - Minimum VM required on AWS is m4.xlarge.
@@ -16,5 +16,13 @@ This repository provides the artifacts to automate a single node installation of
 - The script needs to be ran as root to simplify installation.
 
 ## Instructions
-
+```
+sudo -i
+yum install -y git
+git clone https://github.com/zoharsan/ibm-bigsql-deploy.git
+cd ibm-bigsql-deploy
+chmod +x *bigsql*
+./install_hdp_bigsql_final.sh
+```
+Depending on the VM performance, the installation can take anywhere between 40 minutes to 1 hour.
 
