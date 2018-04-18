@@ -1,3 +1,5 @@
+#!/bin/bash
+
 #To run - export any variables then execute below:
 #curl -sSL https://gist.github.com/abajwa-hw/7794ea013c96f3f41c4a8b10aeeccd4d/raw | sudo -E sh 
 
@@ -10,12 +12,12 @@ export CLUSTER_NAME=hdp
 export host_count=${host_count:-1}   #choose number of nodes
 export ambari_services=${ambari_services:-HDFS HIVE PIG SPARK MAPREDUCE2 TEZ YARN ZOOKEEPER ZEPPELIN HBASE KNOX SQOOP SLIDER}  #AMBARI_METRICS can be added post-install
 export hdp_ver=${hdp_ver:-2.6}
-export ambari_version=2.6.1.0
+export ambari_version=2.6.1.0 #Do not choose 2.6.1.5 as there are some sporadic ambari-agent crashes during BigSQL installation.
 
 export HOST_FQDN=`hostname -f`
 export AMBARI_HOST=localhost
 
-export bigsqlbinary=${bigsqlbinary:-ibmdb2bigsqlnpe_5.0.2.bin}
+export bigsqlbinary=${bigsqlbinary:-/root/ibmdb2bigsqlnpe_5.0.2.bin}
 
 #Components to install 0 for yes 1 for no
 export deploybasestack=0
@@ -333,14 +335,13 @@ fi
 
 #Install BigSQL Package
 echo "Installing BigSQL Package" ${bigsqlbinary} "..."
-cd ~
-chmod +x ./${bigsqlbinary}
+chmod +x ${bigsqlbinary}
 cat << EOF > input_bigsql_package_install.txt
 y
 1
 n
 EOF
-./${bigsqlbinary} < input_bigsql_package_install.txt
+${bigsqlbinary} < input_bigsql_package_install.txt
 
 #Enable BigSQL Extension
 echo "Enabling BigSQL Extension..."
