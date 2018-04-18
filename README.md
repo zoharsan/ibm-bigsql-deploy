@@ -6,7 +6,7 @@ This repository provides the artifacts to automate a single node installation of
 
 - This script deploys latest IBM BigSQL 5.0.2 on top of HDP 2.6 using Ambari 2.6.1.0.
 - This script has been tested on Hortonworks private Field Cloud, as well Amazon AWS using CentOS 7 image.
-- The minimum specs for the VM are 2 to 4 cores, 16 GB RAM, and 50GB if only HDP+BigSQL are installed.
+- The minimum specs for the VM are 2 to 4 cores, 16 GB RAM, and 20GB Storage if only HDP+BigSQL are installed.
   - Minimum VM required on AWS is m4.xlarge.
   - Minimum VM required on Hortonworks private FieldCloud is m3.xlarge.
 - These 3 files are needed for the installation to succeed:
