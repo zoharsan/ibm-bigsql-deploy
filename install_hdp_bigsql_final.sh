@@ -355,8 +355,8 @@ EOF
 #Run BigSQL precheck utility
 /var/lib/ambari-server/resources/extensions/IBM-Big_SQL/5.0.2.0/services/BIGSQL/package/scripts/bigsql-precheck.sh -V
 
-#Bigsql requires write to /hadoop/hdfs/data - Achieving this by opening write to hadoop group using posix. Need to check with IBM
-chmod 775 /hadoop/hdfs/data
+#Bigsql requires write to /hadoop/hdfs/data. Doing it this way for now as bigsql user may not exist
+chmod 770 /hadoop/hdfs/data
 
 #Check ambari-agent status and start if needed
 if [ `ambari-agent status | grep 'not running' | wc -l` -eq 1 ]
@@ -377,6 +377,11 @@ waitForServiceToInstall BIGSQL
 
 #Give it 10 seconds for Bigsql SSH setup to complete
 sleep 15
+
+#Fixing permissions on /hadoop/hdfs/data
+echo "Fixing permissions on /hadoop/hdfs/data the proper way before starting the service"
+chmod 750 /hadoop/hdfs/data
+setfacl -m user:bigsql:rwx /hadoop/hdfs/data
 
 #Starting BIGSQL
 startService BIGSQL
