@@ -4,7 +4,7 @@ This repository provides the artifacts to automate a single node installation of
 
 ## Prerequisites
 
-- This script deploys latest IBM BigSQL 5.0.2 on top of HDP 2.6 using Ambari 2.6.1.0.
+- This script deploys latest IBM BigSQL 5.0.2 on top of HDP 2.6 using Ambari 2.6.1.0, along with IBM Data Server Manager. The script also deploys an IBM BigSQL sample demo data set, as well as a Zeppelin jdbc based bigsql interpreter.
 - This script has been tested on Hortonworks private Field Cloud, as well Amazon AWS using CentOS 7 image.
 - The minimum specs for the VM are 2 to 4 cores, 16 GB RAM, and 20GB Storage if only HDP+BigSQL are installed.
   - Minimum VM required on AWS is m4.xlarge.
@@ -23,6 +23,8 @@ export deploybasestack=0  #Base HDP stack
 export pwdlesssh=0        #Passwordless ssh
 export bigsql=0           #BigSQL
 export dsm=0              #IBM Data Server Manager Console
+export sampleds=0         #Deploys the Outdoor Company sample data set
+export bigsqlzep=0        #Deploys a Zeppelin BigSQL jdbc based interpreter
 ```
 Please point the bigsqlbinary variable to the absolute path of the BigSQL binary:
 ```
