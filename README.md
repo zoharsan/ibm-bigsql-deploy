@@ -41,7 +41,7 @@ chmod +x *bigsql*
 ./install_hdp_bigsql_final.sh
 ```
 
-Depending on the VM performance, the installation can take anywhere between 40 minutes to 1 hour.
+Depending on the VM performance, the installation can take anywhere between 40 minutes to 1 hour. If deploying the sample data set, it could take up to an extra hour.
 
 ## Additional Resources
 IBM BigSQL 5.0.2 Documentation:
