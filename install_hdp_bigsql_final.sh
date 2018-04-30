@@ -24,7 +24,8 @@ export deploybasestack=0
 export pwdlesssh=0
 export bigsql=0
 export dsm=0
-
+export sampleds=0
+export bigsqlzep=0
 
 waitForServiceToStart () {
        	# Ensure that Service is not in a transitional state
@@ -111,6 +112,11 @@ startService () {
             if [[ "$TASKSTATUS" == COMPLETED || "$TASKSTATUS" == FAILED ]]; then
                 LOOPESCAPE="true"
             fi
+            if [ "$SERVICE" == HDFS ]; then
+            		if [ `hdfs dfsadmin -safemode get | grep 'Safe mode is ON' | wc -l` -eq 1 ]; then
+            	    	su - hdfs -c 'hdfs dfsadmin -safemode leave'
+            	    fi
+            fi
             echo "*********************************Start $SERVICE Task Status $TASKSTATUS"
             sleep 5
         done
@@ -156,16 +162,16 @@ fi
 InstallBigSql() {
 
 #Create BigSQL Service
-curl -u admin:$AMBARI_PWD -i -H "X-Requested-By: ambari" -X POST http://localhost:8080/api/v1/clusters/hdp/services/BIGSQL
+curl -u admin:$AMBARI_PWD -i -H "X-Requested-By: ambari" -X POST http://localhost:8080/api/v1/clusters/$CLUSTER_NAME/services/BIGSQL
 
 #Create BIGSQL_HEAD Component
-curl -u admin:$AMBARI_PWD -i -H "X-Requested-By: ambari" -X POST http://localhost:8080/api/v1/clusters/hdp/services/BIGSQL/components/BIGSQL_HEAD
+curl -u admin:$AMBARI_PWD -i -H "X-Requested-By: ambari" -X POST http://localhost:8080/api/v1/clusters/$CLUSTER_NAME/services/BIGSQL/components/BIGSQL_HEAD
 
 #CREATE BIGSQL_WORKER Component
-curl -u admin:$AMBARI_PWD -i -H "X-Requested-By: ambari" -X POST http://localhost:8080/api/v1/clusters/hdp/services/BIGSQL/components/BIGSQL_WORKER
+curl -u admin:$AMBARI_PWD -i -H "X-Requested-By: ambari" -X POST http://localhost:8080/api/v1/clusters/$CLUSTER_NAME/services/BIGSQL/components/BIGSQL_WORKER
 
 #Create BiSQL Configuration bigsql-env
-curl -u admin:$AMBARI_PWD -i -H "X-Requested-By: ambari" -X POST -d '{ "type": "bigsql-env", "tag": "INITIAL", "version": 1, "properties": { "bigsql_continue_on_failure": "true", "bigsql_db_path": "/var/ibm/bigsql/database", "bigsql_ha_port": "20008", "bigsql_hdfs_poolname": "autocachepool", "bigsql_hdfs_poolsize": "0", "bigsql_initial_install_mln_count": "1", "bigsql_java_heap_size": "2048", "bigsql_log_dir": "/var/ibm/bigsql/logs", "bigsql_mln_inc_dec_count": "1", "bigsql_resource_percent": "25", "db2_fcm_port_number": "28051", "db2_port_number": "32051","dfs.datanode.data.dir": "/hadoop/hdfs/data","enable_auto_log_prune": "true","enable_auto_metadata_sync": "true","enable_impersonation": "false","enable_metrics": "false", "enable_yarn": "false","public_table_access": "false","scheduler_admin_port": "7054","scheduler_service_port": "7053"}, "properties_attributes": { "final": { "fs.defaultFS": "true" }}}' http://localhost:8080/api/v1/clusters/hdp/configurations
+curl -u admin:$AMBARI_PWD -i -H "X-Requested-By: ambari" -X POST -d '{ "type": "bigsql-env", "tag": "INITIAL", "version": 1, "properties": { "bigsql_continue_on_failure": "true", "bigsql_db_path": "/var/ibm/bigsql/database", "bigsql_ha_port": "20008", "bigsql_hdfs_poolname": "autocachepool", "bigsql_hdfs_poolsize": "0", "bigsql_initial_install_mln_count": "1", "bigsql_java_heap_size": "2048", "bigsql_log_dir": "/var/ibm/bigsql/logs", "bigsql_mln_inc_dec_count": "1", "bigsql_resource_percent": "25", "db2_fcm_port_number": "28051", "db2_port_number": "32051","dfs.datanode.data.dir": "/hadoop/hdfs/data","enable_auto_log_prune": "true","enable_auto_metadata_sync": "true","enable_impersonation": "false","enable_metrics": "false", "enable_yarn": "false","public_table_access": "false","scheduler_admin_port": "7054","scheduler_service_port": "7053"}, "properties_attributes": { "final": { "fs.defaultFS": "true" }}}' http://localhost:8080/api/v1/clusters/$CLUSTER_NAME/configurations
 
 #Create BigSQL Configuration bigsql-users-env
 curl -u admin:$AMBARI_PWD -i -H "X-Requested-By: ambari" -X POST -d "{ \"type\" : \"bigsql-users-env\", \"tag\" : \"INITIAL\", \"version\" : 1, \"properties\" : { \"ambari_user_login\" : \"admin\", \"ambari_user_password\" : \"$AMBARI_PWD\", \"bigsql_admin_group_name\" : \"bigsqladm\", \"bigsql_admin_group_id\" : "43210", \"bigsql_user\" : \"bigsql\", \"bigsql_user_id\" : \"2824\", \"bigsql_user_password\" : \"bigsql\", \"enable_ldap\" : \"false\", \"bigsql_setup_ssh\" : \"true\" }, \"properties_attributes\" : { \"ambari_user_password\" : { \"toMask\" : \"false\" }, \"bigsql_user_password\" : { \"toMask\" : \"false\" } }}" http://localhost:8080/api/v1/clusters/$CLUSTER_NAME/configurations
@@ -237,6 +243,21 @@ curl -u admin:$AMBARI_PWD -i -H "X-Requested-By: ambari" -i -X PUT -d '{ "Reques
 
 }
 
+DeploySampleDataSet() {
+
+cat << EOF > sample_setup.txt
+bigsql
+EOF
+su - bigsql -c '/usr/ibmpacks/bigsql/5.0.2.0/bigsql/samples/setup.sh -u bigsql -s `hostname -f` -n 32051 -d BIGSQL' < sample_setup.txt
+
+}
+
+CreateBigsqlZeppelin() {
+
+export sessionid=`curl -i --data 'userName=admin&password=admin' -X POST http://localhost:9995/api/login | grep JSESSIONID | grep -v deleteMe | tail -1| sed 's/Set-Cookie: //g' | awk '{ print $1 }'`
+curl -i  -b $sessionid -X POST -d '{ name: "bigsql", group: "jdbc", properties: { default.password: "bigsql", default.user: "bigsql",  default.url: "jdbc:db2://localhost:32051/bigsql", default.driver: "com.ibm.db2.jcc.DB2Driver", common.max_count: "1000" }, interpreterGroup: [ { name: "sql", class: "org.apache.zeppelin.jdbc.JDBCInterpreter" }], dependencies: [ { groupArtifactVersion: "/usr/ibmpacks/current/bigsql/db2/java/db2jcc.jar" }]}' http://localhost:9995/api/interpreter/setting
+
+}
 
 if [ $deploybasestack -eq 0 ]
 then
@@ -369,7 +390,7 @@ fi
 #Install BigSQL
 InstallBigSql
 
-echo "Give it a good 18 minutes for BigSQL to install before calling are we there yet"
+echo "Give it a good 18 minutes for BigSQL to install before waking up and checking status. This installation can take up to 1 hour."
 sleep 1080
 
 #Starting BIGSQL Service
@@ -394,12 +415,13 @@ fi
 if [ $dsm -eq 0 ]
 then
 
+echo "Deploying IBM Data Server Manager..."
 InstallDSM
 
 #Wait for DSM to install
 waitForServiceToInstall DATASERVERMANAGER
 
-#Starting BIGSQL
+#Starting DSM
 startService DATASERVERMANAGER
 
 #Setup Knox
@@ -410,12 +432,15 @@ echo "**************************************************************************
 	
 fi
 
+if [ $bigsqlzep -eq 0 ]
+then
+echo "Creating bigsql Zeppelin interpreter..."
+CreateBigsqlZeppelin
+fi
+
 echo "Final Step: Recycling Hadoop services left in an inconsistent state..."
 
 #Recycling Services left in inconsistent state
-stopService HDFS
-startService HDFS
-
 stopService YARN
 startService YARN
 
@@ -428,4 +453,13 @@ startService HIVE
 stopService HBASE
 startService HBASE
 
-echo "Installation Complete..."
+stopService HDFS
+startService HDFS
+
+if [ $sampleds -eq 0 ]
+then
+echo "Deploying BigSQL Sample Data set..."
+DeploySampleDataSet
+fi
+
+echo "Installation Complete... Your bigsql credentials are user:bigsql, password:bigsql... Enjoy"
