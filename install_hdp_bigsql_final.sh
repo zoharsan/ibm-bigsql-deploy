@@ -438,6 +438,13 @@ echo "Creating bigsql Zeppelin interpreter..."
 CreateBigsqlZeppelin
 fi
 
+if [ $sampleds -eq 0 ]
+then
+echo "Deploying BigSQL Sample Data set..."
+DeploySampleDataSet
+fi
+
+
 echo "Final Step: Recycling Hadoop services left in an inconsistent state..."
 
 #Recycling Services left in inconsistent state
@@ -455,11 +462,5 @@ startService HBASE
 
 stopService HDFS
 startService HDFS
-
-if [ $sampleds -eq 0 ]
-then
-echo "Deploying BigSQL Sample Data set..."
-DeploySampleDataSet
-fi
 
 echo "Installation Complete... Your bigsql credentials are user:bigsql, password:bigsql... Enjoy"
