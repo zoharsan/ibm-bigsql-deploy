@@ -34,7 +34,7 @@ Run the script as following:
 ```
 sudo -i
 cp /tmp/ibmdb2bigsqlnpe_5.0.2.bin /root
-chmod +x /root/bmdb2bigsqlnpe_5.0.2.bin
+chmod +x /root/ibmdb2bigsqlnpe_5.0.2.bin
 yum install -y git
 git clone https://github.com/zoharsan/ibm-bigsql-deploy.git
 cd ibm-bigsql-deploy
