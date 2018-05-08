@@ -224,10 +224,10 @@ curl -u admin:$AMBARI_PWD -i -H "X-Requested-By: ambari" -i -X PUT -d '{ "Reques
 InstallDSM() {
 
 #Create DATASERVERMANAGER Service
-curl -u admin:$AMBARI_PWD -i -H "X-Requested-By: ambari" -X POST http://localhost:8080/api/v1/clusters/hdp/services/DATASERVERMANAGER
+curl -u admin:$AMBARI_PWD -i -H "X-Requested-By: ambari" -X POST http://localhost:8080/api/v1/clusters/$CLUSTER_NAME/services/DATASERVERMANAGER
 
 #Create DSM_Master Component
-curl -u admin:$AMBARI_PWD -i -H "X-Requested-By: ambari" -X POST http://localhost:8080/api/v1/clusters/hdp/services/DATASERVERMANAGER/components/DSM_Master
+curl -u admin:$AMBARI_PWD -i -H "X-Requested-By: ambari" -X POST http://localhost:8080/api/v1/clusters/$CLUSTER_NAME/services/DATASERVERMANAGER/components/DSM_Master
 
 #Create DSM Configuration dsm-config
 curl -u admin:$AMBARI_PWD -i -H "X-Requested-By: ambari" -X POST -d '{ "type": "dsm-config", "tag": "INITIAL", "version": 1, "properties": { "dsm_admin_user": "admin", "dsm_server_port": "11080", "dsm_user": "dsmuser", "dsm_group": "hadoop" }, "properties_attributes": { "final": { "dsm_user": "true", "dsm_group": "true" }}}' http://localhost:8080/api/v1/clusters/$CLUSTER_NAME/configurations
@@ -444,7 +444,8 @@ echo "Deploying BigSQL Sample Data set..."
 DeploySampleDataSet
 fi
 
-
+if [ $bigsql -eq 0 ]
+then
 echo "Final Step: Recycling Hadoop services left in an inconsistent state..."
 
 #Recycling Services left in inconsistent state
@@ -464,3 +465,4 @@ stopService HDFS
 startService HDFS
 
 echo "Installation Complete... Your bigsql credentials are user:bigsql, password:bigsql... Enjoy"
+fi
