@@ -279,7 +279,7 @@ sudo rpm -Uvh http://dev.mysql.com/get/mysql-community-release-el7-5.noarch.rpm
 
 export install_ambari_server=true
 
-curl -sSL https://raw.githubusercontent.com/seanorama/ambari-bootstrap/master/ambari-bootstrap.sh | sudo -E sh
+curl -sSL https://github.com/abajwa-hw/ambari-bootstrap/blob/master/ambari-bootstrap.sh | sudo -E sh
 
 echo "Waiting 30s for Ambari to come up..."
 sleep 30
@@ -293,7 +293,7 @@ if [ $bigsql -eq 0 ]
 then
 	#Circumventing code page conversion issues with utf8 in bigsql installation script
 	cp /usr/lib/python2.6/site-packages/resource_management/core/shell.py /usr/lib/python2.6/site-packages/resource_management/core/shell.py.orig
-	cp shell.bigsql.py /usr/lib/python2.6/site-packages/resource_management/core/shell.py
+	cp /root/ibm-bigsql-deploy/shell.bigsql.py /usr/lib/python2.6/site-packages/resource_management/core/shell.py
 fi
 
 #echo "Setting recommendation strategy..."
