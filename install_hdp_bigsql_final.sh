@@ -279,7 +279,7 @@ sudo rpm -Uvh http://dev.mysql.com/get/mysql-community-release-el7-5.noarch.rpm
 
 export install_ambari_server=true
 
-curl -sSL https://github.com/abajwa-hw/ambari-bootstrap/blob/master/ambari-bootstrap.sh | sudo -E sh
+curl -sSL https://raw.githubusercontent.com/abajwa-hw/ambari-bootstrap/master/ambari-bootstrap.sh | sudo -E sh
 
 echo "Waiting 30s for Ambari to come up..."
 sleep 30
