@@ -449,6 +449,9 @@ then
 echo "Final Step: Recycling Hadoop services left in an inconsistent state..."
 
 #Recycling Services left in inconsistent state
+stopService HDFS
+startService HDFS
+
 stopService YARN
 startService YARN
 
@@ -460,9 +463,6 @@ startService HIVE
 
 stopService HBASE
 startService HBASE
-
-stopService HDFS
-startService HDFS
 
 echo "Installation Complete... Your bigsql credentials are user:bigsql, password:bigsql... Enjoy"
 fi
