@@ -464,6 +464,9 @@ startService HIVE
 stopService HBASE
 startService HBASE
 
+stopService ZEPPELIN
+startService ZEPPELIN
+
 echo "Installation Complete... Your bigsql credentials are user:bigsql, password:bigsql... Enjoy"
 fi
 
