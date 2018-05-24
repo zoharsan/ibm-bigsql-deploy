@@ -466,3 +466,7 @@ startService HBASE
 
 echo "Installation Complete... Your bigsql credentials are user:bigsql, password:bigsql... Enjoy"
 fi
+
+#Once deployed run below to enable admin user to use Ambari views
+sudo -u hdfs hdfs dfs -mkdir /user/admin
+sudo -u hdfs hdfs dfs -chown admin /user/admin
