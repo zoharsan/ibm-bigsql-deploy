@@ -261,7 +261,7 @@ curl -i  -b $sessionid -X POST -d '{ name: "bigsql", group: "jdbc", properties: 
 
 if [ $deploybasestack -eq 0 ]
 then
-yum install -y git python-argparse mysql-connector-java* ksh redhat-lsb-core
+yum install -y git python-argparse mysql-connector-java*
 cd ~
 git clone https://github.com/seanorama/ambari-bootstrap.git
 
@@ -327,6 +327,9 @@ fi
 
 if [ $bigsql -eq 0 ]
 then
+#Install BigSQL prereqs
+yum install -y ksh redhat-lsb-core
+
 if [ $deploybasestack -eq 0 ]
 then
  #Sleeping for a good 10 minutes before 'are we there yet'
